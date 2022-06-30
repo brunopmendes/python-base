@@ -51,13 +51,17 @@ if (operation not in op_list):
 
 validate_nums = []
 for num in numeros:
-    if not num.isdigit():
+    if not num.replace('.', '').isdigit(): #replace para que não saia do programa caso seja digitado um valor float
         print(f'Número inválido {num}')
         sys.exit(1)
+    if "." in num:
+        num = float(num)    
     else:
-        validate_nums.append(int(num))
+        num = int(num)
+    validate_nums.append(num)
 
 num1, num2 = validate_nums
+
 sum = num1 + num2
 sub = num1 - num2
 mul = num1 * num2
