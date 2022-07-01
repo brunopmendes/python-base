@@ -1,0 +1,4 @@
+Bruno,brunopmendes@gmail.com
+Ricardo,ricardosouza@gmail.com
+Sueli,suelilima@gmail.com
+Izabela,izabelacosta@gmail.com
