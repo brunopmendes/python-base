@@ -16,9 +16,19 @@ __version__ = "0.1.3"
 __author__ = "Bruno Mendes"
 __license__ = "Unlicense"
 
-from email import message
 import os
 import sys
+import logging
+
+log_level = os.getenv("LOG_LEVEL", "WARNING").upper()
+log = logging.Logger(__name__, log_level)
+ch = logging.StreamHandler() #console handlers
+ch.setLevel(log_level) #seta level do handler
+fmt = logging.Formatter(
+    '%(asctime)s %(name)s %(levelname)s l:%(lineno)d f:%(filename)s: %(message)s'
+)
+ch.setFormatter(fmt) #formatacao handler
+log.addHandler(ch)
 
 arguments = {
     "lang": None,
@@ -28,11 +38,11 @@ for arg in sys.argv[1:]:
     try:
         key, value = arg.split("=")
     except ValueError as e:
-        # TODO: Logging
-        print(f"[ERROR] {str(e)}")
-        print("You need to use `=`")
-        print(f"You passed  {arg}")
-        print("Try with --key=value")
+        log.error(
+            "You need to use `=`, you passed %s, try --key=value: %s",
+            arg,
+            str(e) 
+        )
         sys.exit(1)
 
     key = key.lstrip("-").strip()
