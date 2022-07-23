@@ -5,6 +5,8 @@ ___version___ = "0.1.1"
 
 import os
 import sys
+import smtplib
+from email.mime.text import MIMEText
 
 arguments = sys.argv[1:]
 
@@ -22,20 +24,33 @@ path = os.curdir
 filepath = os.path.join(path, filename) #emails.txt
 template_path = os.path.join(path, template_name) #email_template.txt
 
-for line in open(filepath):  #c/ open o for itera linha por linha do arquivo txt
-    name, email = line.split(",")
+with smtplib.SMTP(host="localhost", port=8025) as server:
 
-    # TODO: Substituir por envio de email
-    print(f"Enviando email para {email}\n")
-    print(
-        open(template_path).read()
-        % {
-            "nome": name,
-            "produto": "caneta",
-            "texto": "sua ausencia de caneta.",
-            "link": "https://caneta.com.br",
-            "quantidade": 1,
-            "preco": 50,
-        }
-    )
-    print("-" * 50)
+    for line in open(filepath):  #c/ open o for itera linha por linha do arquivo txt
+        name, email = line.split(",")
+
+        text = (
+            open(template_path).read()
+            % {
+                "nome": name,
+                "produto": "caneta",
+                "texto": "sua ausencia de caneta.",
+                "link": "https://caneta.com.br",
+                "quantidade": 1,
+                "preco": 50,
+            }
+        )
+
+
+        FROM = "brupmendes@gmail.com"
+        TO = ", ".join([email])
+        SUBJECT = "Compre +"
+        message = MIMEText(text)
+        
+        message["Subject"] = f"{SUBJECT}"
+        message["From"] = f"{FROM}"
+        message["To"] = f"{TO}"
+
+        server.sendmail(FROM, TO, message.as_string())
+
+    
