@@ -1,0 +1,4 @@
+Bruno,1,2
+Maria,2,3
+Joao,4,10
+Tirulipa,3,100
