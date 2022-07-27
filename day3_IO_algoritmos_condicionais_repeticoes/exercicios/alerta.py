@@ -15,45 +15,36 @@ import sys
 import logging
 log = logging.Logger("alerta")
 
-# try:
-#     temp_atual = float(input("Informe a temperatura atual: ").strip())
-# except ValueError as e:
-#     log.error("Temperatura inválida")
-#     sys.exit(1)
+# TODO: Mover para módulo de utilidades
 
-# try:
-#     umidade_atual = float(input("Informe a umidade do ar: ").strip())
-# except ValueError as e:
-#     log.error("Umidade inválida")
-#     sys.exit(1)
+def is_completely_filled(dict_of_inputs):
+    """Returns a boolean telling if a dict is completely filled"""
+    info_size = len(dict_of_inputs)
+    filled_size = len(
+        [value for value in dict_of_inputs.values() if value is not None]
+    )
+    dict_full = info_size == filled_size
+    return dict_full
 
-info = {
-    "temperatura": None,
-    "umidade": None
-}
+def read_inputs_for_dict(dict_of_info):
+    """reads information for a dict from user inputs"""
+    for key in dict_of_info.keys(): #["temperatura", "umidade"]
 
-while True:
-    # condicao de parada
-    # o dicionário está completamente preenchido
-    info_size = len(info.values())
-    filled_size = len([value for value in info.values() if value is not None])
-
-    if info_size == filled_size:
-        break
-
-    keys = info.keys()
-    for key in keys:
-
-        if info[key] is not None:
+        if dict_of_info[key] is not None:
             continue
         try:
-            info[key] = float(input(f"Informe a {key}: ").strip())
+            dict_of_info[key] = float(input(f"Informe a {key}: ").strip())
         except ValueError:
             log.error(f"{key.capitalize()} inválida")
             sys.exit(1)
 
-temp = info['temperatura']
-umi = info['umidade']
+# PROGRAMA PRINCIPAL
+info = {"temperatura": None, "umidade": None}
+
+while not is_completely_filled(info):
+    read_inputs_for_dict(info)
+
+temp, umi = info.values()
 
 if temp > 45:
     print("ALERTA!!! Perigo calor extremo")
