@@ -32,6 +32,17 @@ import sys
 import os
 from datetime import datetime
 
+valid_operations = {
+    'sum': lambda a, b: int(a) + int(b), 
+    'sub': lambda a, b: int(a) - int(b), 
+    'mul': lambda a, b: int(a) * int(b), 
+    'div': lambda a, b: int(a) / int(b),
+}
+
+path = os.curdir #diretório atual
+filepath = os.path.join(path, "infixcalc.log")
+timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+user = os.getenv('USERNAME', 'anonymous')
 
 while True:
     arguments = sys.argv[1:]
@@ -50,10 +61,9 @@ while True:
 
     operation, *numeros = arguments
 
-    op_list = ['sum', 'sub', 'mul', 'div']
 
-    if (operation not in op_list):
-        print(f'Operação inválida, informe um dos itens a seguir {op_list}')
+    if (operation not in valid_operations):
+        print(f'Operação inválida, informe um dos itens a seguir {valid_operations}')
         sys.exit(1)
 
     validate_nums = []
@@ -67,31 +77,24 @@ while True:
             num = int(num)
         validate_nums.append(num)
 
-    num1, num2 = validate_nums
+    try:
+        num1, num2 = validate_nums
+    except ValueError as e:
+        print(str(e))
+        sys.exit(1)
 
-    if(operation == 'sum'):
-        result = num1 + num2
-    elif(operation == 'sub'):
-        result = num1 - num2
-    elif(operation == 'mul'):
-        result = num1 * num2
-    else: 
-        result = num1 / num2
-
+    result = valid_operations[operation](n1, n2)
     print(f"O resultado é {result}")
 
-    path = os.curdir #diretório atual
-    filepath = os.path.join(path, "infixcalc.log")
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    user = os.getenv('USERNAME', 'anonymous')
-
     try:
-        with open(filepath, 'a') as file_calc:
-            file_calc.write(f"{timestamp} - {user} - {operation}, {num1}, {num2} = {result}\n")
+        with open(filepath, 'a') as log:
+            log.write(f"{timestamp} - {user} - {operation}, {num1}, {num2} = {result}\n")
     except PermissionError as e:
         print(str(e))
         sys.exit(1)
         
+    arguments = None
+
     cont = input("Deseja efetuar outra operação? [N/y]").strip().lower()
     if cont != 'y':
         break
